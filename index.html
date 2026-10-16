@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة الممالك الاستراتيجية 3D</title>
+    <style>
+        body { margin: 0; background: #0f172a; color: white; font-family: Tahoma, sans-serif; overflow: hidden; }
+        #hud { position: absolute; top: 15px; right: 15px; background: rgba(15, 23, 42, 0.9); padding: 15px; border-radius: 8px; border: 1px solid #334155; z-index: 10; }
+    </style>
+</head>
+<body>
+    <div id="hud">
+        <h2>مملكة عهد السلطان - 3D</h2>
+        <p>🪙 الذهب: 1,000 | 🪵 الخشب: 1,000</p>
+        <p style="color: #38bdf8; font-size: 12px;">جاري تشغيل محرك الخريطة...</p>
+    </div>
+
+    <!-- استدعاء مكتبة Three.js للعرض ثلاثي الأبعاد -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // إعداد مشهد الـ 3D والكاميرا
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // إضافة إضاءة للعالم
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(20, 40, 20);
+        scene.add(dirLight);
+
+        // بناء أرضية الخريطة الاستراتيجية
+        const geometry = new THREE.BoxGeometry(20, 0.5, 20);
+        const material = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });
+        const mapGrid = new THREE.Mesh(geometry, material);
+        scene.add(mapGrid);
+
+        // بناء القلعة المركزية (مجسم تجريبي ثلاثي الأبعاد)
+        const castleGeo = new THREE.BoxGeometry(3, 4, 3);
+        const castleMat = new THREE.MeshStandardMaterial({ color: 0x3b82f6 });
+        const castle = new THREE.Mesh(castleGeo, castleMat);
+        castle.position.y = 2;
+        scene.add(castle);
+
+        camera.position.set(15, 20, 25);
+        camera.lookAt(0, 0, 0);
+
+        // حلقة التحديث والرسم المستمر
+        function animate() {
+            requestAnimationFrame(animate);
+            castle.rotation.y += 0.005; // دوران خفيف للقلعة للتحقق من الحركة
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // التوافق مع تغيير حجم الشاشة للموبايل
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
